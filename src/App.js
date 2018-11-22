@@ -38,12 +38,14 @@ const family = {
 // Component de plus haut niveau, de Class, dit "statefull", qui distribue tous les autres components
 class App extends Component {
 
-  // Déclaration du "state", qui récupère les données
+  // Déclaration du "State", qui récupère les données
   state = {
     family
   }
 
-//On peut modifier le "state" grâce à des fonctions
+// INPORTATION DE PROPS DANS LE COMPONENT PRINCIPAL, DE CLASS, GRÂCE A "THIS", QUI FAIT REFERENCE A CETTE CLASS
+
+//On peut modifier le "State" grâce à des fonctions
   handleClick = num => {
     const familly = { ...this.state.family }
     family.member1.age += num
@@ -52,12 +54,15 @@ class App extends Component {
 
   // "Fonction fléchée" handleClick équivalente à (si un seul paramètre - ici num - les parenthèses ne sont pas nécessaires) :
   /*
-   handleClick () {
+   handleClick (num) {
+    const familly = { ...this.state.family }
     return (
+      family.member1.age += num
+      this.setState({ family })
     )
   }*/
 
-//Attention, les inputs se gère en temps réel grâce à un "event" (ici, le paramètre de la fonction handleChange), une "target" et sa "value"
+// Modification du State en temps réel grâce à une fonction dans un input, en temps réel, avec un "event" (ici, le paramètre de la fonction handleChange), une "target" et sa "value"
   handleChange = event => {
     const familly = { ...this.state.family }
     const name = event.target.value
@@ -66,6 +71,8 @@ class App extends Component {
   }
 
   render() {
+
+    // On "déstructure" alléger la syntaxe, on factorise et importe plus clairement
     const { titre } = this.props
     const { state } = this.state
     return (
@@ -73,7 +80,11 @@ class App extends Component {
 
       <h1> {titre} </h1>
 
-      <input value={family.member1.name} onChange={this.handleChange} type="text"/>
+      {/*On liste les components...
+
+      On leur passe des attributs désirés (value, name, age...) sous forme d'objets JS, qui peuvent être aussi des fonctions (handleChange, handleClick...)*/}
+
+      <input value={ family.member1.name } onChange={ this.handleChange } type="text"/>
 
       <Member
         age={ family.member1.age }
@@ -90,9 +101,12 @@ class App extends Component {
       <Member
         age={ family.member5.age }
         name={ family.member5.name } />
+
       <Member
         age={ family.member6.age }
         name={ family.member6.name } >
+
+      {/*Props children comme si il y avait un autre attribut après name pour ce membre*/}
         <strong>Je suis la petite dernière</strong>
       </Member>
 

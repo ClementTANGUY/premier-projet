@@ -11,5 +11,5 @@ const Button = ({ gettingOlder }) => (
   </div>
 )
 
-// On exporte le component de 2ème niveau vers le component principal
+// On exporte le component de 2ème niveau vers le component principal de Class
 export default Button
