@@ -4,9 +4,9 @@ import './App.css';
 
 //On importe tous les "components" secondaires ou de 2ème niveau, dit "stateless"
 import Member from './Components/Member'
-import Button from './Components/Button'
+/*import Button from './Components/Button'*/
 
-// "Dans le dur", un peu de données, gérées ensuite par une DB :
+// "Dans le dur", un peu de données, récupérées par la suite d'une DB ou d'une API :
 
 const family = {
   member1: {
@@ -40,78 +40,106 @@ class App extends Component {
 
   // Déclaration du "State", qui récupère les données
   state = {
-    family
+    family,
+    isShown: false
   }
 
-// INPORTATION DE PROPS DANS LE COMPONENT PRINCIPAL, DE CLASS, GRÂCE A "THIS", QUI FAIT REFERENCE A CETTE CLASS
+// IMPORTATION DES PROPS DANS LE COMPONENT PRINCIPAL, DE CLASS, GRÂCE A "THIS", QUI FAIT AINSI REFERENCE A CETTE CLASS
 
-//On peut modifier le "State" grâce à des fonctions
-  handleClick = num => {
+//On peut alors modifier le "State" grâce à des fonctions
+  handleClick = (id, num) => {
+    // On copie le State
     const familly = { ...this.state.family }
-    family.member1.age += num
+    // On lui affecte une nouvelle donnée
+    family[id].age += num
+    // On le met à jour
     this.setState({ family })
   }
 
-  // "Fonction fléchée" handleClick équivalente à (si un seul paramètre - ici num - les parenthèses ne sont pas nécessaires) :
+  // RQ : "Fonction fléchée" handleClick équivalente à (si un seul paramètre - ici num - les parenthèses ne sont pas nécessaires) :
   /*
    handleClick (num) {
     const familly = { ...this.state.family }
     return (
       family.member1.age += num
-      this.setState({ family })
+      ...
     )
   }*/
 
-// Modification du State en temps réel grâce à une fonction dans un input, en temps réel, avec un "event" (ici, le paramètre de la fonction handleChange), une "target" et sa "value"
-  handleChange = event => {
+// Modification du State en temps réel grâce à une fonction à l'intérieur d'un component input, en temps réel, avec un "event" (ici, le paramètre de la fonction handleChange), une "target" et sa "value"
+  handleChange = (event, id) => {
     const familly = { ...this.state.family }
     const name = event.target.value
-    family.member1.name = name
+    family[id].name = name
+    this.setState({ family })
+  }
+
+  handleShowDetails = () => {
+    const isShown = !this.state.isShown
+    this.setState({ isShown })
+  }
+
+  hideName = id => {
+    const familly = { ...this.state.family }
+    family[id].name = 'X'
     this.setState({ family })
   }
 
   render() {
 
-    // On "déstructure" alléger la syntaxe, on factorise et importe plus clairement
+    // On peut "déstructurer" afin d'alléger la syntaxe, alors on factorise et importe plus clairement
     const { titre } = this.props
-    const { state } = this.state
+    const { state, isShown } = this.state
+
+    // On peut utiliser du conditionnel un plus complexe que du ternaire dans le render
+    let details = null
+
+    if (isShown) {
+      details = <strong>Je suis la petite dernière</strong>
+    }
+
+    // On peut récupérer les données du State, qui sont des objets, sous forme d'Arrays de keys sur lesquels on va boucler (map)...
+    // Tout en le modifiant, en injectant des fonctions (ici hideName, handleChange) à chaque component suivant son id
+    const list = Object.keys(family)
+    .map(member => (
+      <Member
+        // on aurait pu écrire pour l'unicité de la key, mais moins efficace en cas de suppression d'une donnée dans la base modifiant les index :
+        // .map((member, i) => (
+        //... key={ i }
+
+        key={ member }
+        hideName={ () => this.hideName(member) }
+        handleChange={ event => this.handleChange(event, member) }
+        gettingOlder={ num => this.handleClick(member, 1) }
+        age={ family[member].age }
+        name={ family[member].name } />
+    ))
+
+    // Au return, commence le GSX
+    // Alors on liste les components...
+    // On leur passe les attributs désirés (ici titre, value, name, age...) sous forme d'objets JS, qui peuvent être aussi des fonctions (handleChange, handleClick définies plus haut...)
     return (
       <div className="App">
 
+      {/*au lieu de <h1>{ this.props.titre }</h1> grâce à la factorisation*/}
       <h1> {titre} </h1>
 
-      {/*On liste les components...
-
-      On leur passe des attributs désirés (value, name, age...) sous forme d'objets JS, qui peuvent être aussi des fonctions (handleChange, handleClick...)*/}
-
-      <input value={ family.member1.name } onChange={ this.handleChange } type="text"/>
-
-      <Member
-        age={ family.member1.age }
-        name={ family.member1.name } />
-      <Member
-        age={ family.member2.age }
-        name={ family.member2.name } />
-      <Member
-        age={ family.member3.age }
-        name={ family.member3.name } />
-      <Member
-        age={ family.member4.age }
-        name={ family.member4.name } />
-      <Member
-        age={ family.member5.age }
-        name={ family.member5.name } />
+      { list }
 
       <Member
         age={ family.member6.age }
         name={ family.member6.name } >
 
-      {/*Props children comme si il y avait un autre attribut après name pour ce membre*/}
-        <strong>Je suis la petite dernière</strong>
-      </Member>
+        {/*Props children comme si un autre attribut était passé après name pour ce membre*/}
+        { details }
 
-      <Button
-        gettingOlder = { () => this.handleClick(2) }/>
+        <button onClick={ this.handleShowDetails } >
+          {
+            isShown ? 'Hide details' : 'Show details'
+          }
+        </button>
+
+      </Member>
 
       </div>
     );

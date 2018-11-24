@@ -1,4 +1,4 @@
-import React from 'react'
+/*import React from 'react'
 import './Button.css'
 
 
@@ -6,10 +6,10 @@ import './Button.css'
 const Button = ({ gettingOlder }) => (
   <div>
     <button className="gettingOlder" onClick = { gettingOlder } >
-      Getting older by 2 years
+      Getting older
     </button>
   </div>
 )
 
 // On exporte le component de 2ème niveau vers le component principal de Class
-export default Button
+export default Button*/
