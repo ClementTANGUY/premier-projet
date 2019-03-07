@@ -4,6 +4,7 @@ import './App.css';
 
 //On importe tous les "components" secondaires ou de 2ème niveau, dit "stateless"
 import Member from './Components/Member'
+
 /*import Button from './Components/Button'*/
 
 // "Dans le dur", un peu de données, récupérées par la suite d'une DB ou d'une API :
@@ -44,9 +45,10 @@ class App extends Component {
     isShown: false
   }
 
-// IMPORTATION DES PROPS DANS LE COMPONENT PRINCIPAL, DE CLASS, GRÂCE A "THIS", QUI FAIT AINSI REFERENCE A CETTE CLASS
+// IMPORTATION DES PROPS DANS LE COMPONENT PRINCIPAL (OU DE CLASS), GRÂCE A "THIS", QUI FAIT AINSI REFERENCE A CETTE CLASS
 
-//On peut alors modifier le "State" grâce à des fonctions
+// ON PEUT ALORS MODIFIER LE "STATE" GRÂCE A DES FONCTIONS
+
   handleClick = (id, num) => {
     // On copie le State
     const familly = { ...this.state.family }
@@ -56,17 +58,18 @@ class App extends Component {
     this.setState({ family })
   }
 
-  // RQ : "Fonction fléchée" handleClick équivalente à (si un seul paramètre - ici num - les parenthèses ne sont pas nécessaires) :
-  /*
-   handleClick (num) {
-    const familly = { ...this.state.family }
-    return (
-      family.member1.age += num
-      ...
-    )
-  }*/
+  // RQ NOUVEAUTE ES6 :
+  // - "Fonction fléchée" handleClick équivalente à :
+    /* handleClick (num) {
+       const familly = { ...this.state.family }
+       return (
+        family.member1.age += num
+        ...
+       )
+     }*/
+  // - Si un seul paramètre - ici num - les parenthèses ne sont pas nécessaires
 
-// Modification du State en temps réel grâce à une fonction à l'intérieur d'un component input, en temps réel, avec un "event" (ici, le paramètre de la fonction handleChange), une "target" et sa "value"
+// Modification du State en temps réel grâce à une fonction à l'intérieur d'un component input, avec un "event" (ici, le paramètre de la fonction handleChange), une "target" et sa "value"
   handleChange = (event, id) => {
     const familly = { ...this.state.family }
     const name = event.target.value
@@ -87,11 +90,13 @@ class App extends Component {
 
   render() {
 
-    // On peut "déstructurer" afin d'alléger la syntaxe, alors on factorise et importe plus clairement
+    // Nouveauté ES6: destructuring afin d'alléger la syntaxe, alors on factorise et importe plus clairement
     const { titre } = this.props
     const { state, isShown } = this.state
 
-    // On peut utiliser du conditionnel un plus complexe que du ternaire dans le render
+    // On peut utiliser du conditionnel un peu plus complexe que du ternaire dans le render
+    // let ≠ const let peut être modifier
+
     let details = null
 
     if (isShown) {
@@ -103,19 +108,20 @@ class App extends Component {
     const list = Object.keys(family)
     .map(member => (
       <Member
-        // on aurait pu écrire pour l'unicité de la key, mais moins efficace en cas de suppression d'une donnée dans la base modifiant les index :
-        // .map((member, i) => (
-        //... key={ i }
-
         key={ member }
         hideName={ () => this.hideName(member) }
         handleChange={ event => this.handleChange(event, member) }
         gettingOlder={ num => this.handleClick(member, 1) }
         age={ family[member].age }
         name={ family[member].name } />
+
+        // on aurait pu écrire, pour l'unicité de la key (mais moins efficace en cas de suppression d'une donnée dans la base de données, modifiant les index) :
+        // .map((member, i) => (
+        //... key={ i }
     ))
 
     // Au return, commence le GSX
+    // Les classes s'écrivent avec className
     // Alors on liste les components...
     // On leur passe les attributs désirés (ici titre, value, name, age...) sous forme d'objets JS, qui peuvent être aussi des fonctions (handleChange, handleClick définies plus haut...)
     return (
@@ -146,5 +152,5 @@ class App extends Component {
   }
 }
 
-// On exporte le component Principal ou de 1er niveau vers les components secondaires
+// On exporte enfin le component Principal ou de 1er niveau vers les components secondaires
 export default App;

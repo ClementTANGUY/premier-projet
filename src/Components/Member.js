@@ -3,7 +3,7 @@ import './Button.css'
 
 // Component secondaire ou de 2ème niveau, dit "stateless"
 
-// On importe un "Fragment" afin de pouvoir incorporer ("wrapper") le props children ainsi que son élément html (ici strong) à la suite de l'élément h2 dans la div du component principal de class APP
+// On importe un "Fragment" afin de pouvoir incorporer (ou "wrapper") le props children ainsi que son élément html (ici strong) à la suite de l'élément h2 dans la div du component principal de class APP
 
 // On passe les "props", c'est à dire les différents attributs de nos components, sous forme d'objets JS y compris des fonctions...
 
